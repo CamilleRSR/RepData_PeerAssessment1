@@ -2,11 +2,14 @@
 title: "Project 1"
 author: "Camille Pickren"
 date: "Thursday, October 16, 2014"
-output: html_document
+output:
+  html_document:
+    fig_width: 9
 ---
 ##Loading and preprocessing the data  
 
-```{r, echo = TRUE}
+
+```r
 steps <- read.csv("activity.csv")     ##load data
 
 steps$date <- as.Date(steps$date)     ##change date column class
@@ -19,20 +22,24 @@ daily_steps <- aggregate(steps ~ date, data = clean_steps, sum)
 hist(daily_steps$steps, main="Total Steps Taken Per Day", breaks=10, xlab="Number of Steps")
 ```
 
+![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1.png) 
+
 ##What is mean total number of steps taken per day?
 
-```{r, echo = TRUE}
+
+```r
 mean_steps = round(mean(daily_steps$steps), 2)
 median_steps = round(median(daily_steps$steps), 2)
 options(scipen=999)
 ```
 
-###The mean number of steps taken per day is: `r mean_steps`   
-###The median number of steps taken per day is: `r median_steps`
+###The mean number of steps taken per day is: 10766.19   
+###The median number of steps taken per day is: 10765
 
 ##What is the average daily activity pattern?
 
-```{r echo = TRUE}
+
+```r
 interval_steps <- aggregate(steps ~ interval, data = clean_steps, sum)
 
 library(ggplot2)
@@ -40,37 +47,47 @@ ggplot(interval_steps, aes(x=interval, y=steps)) +
     geom_line(color="darkblue", size=1) +  
     labs(title="Average Daily Activity Pattern", x="Interval", y="Number of steps") +  
     theme_bw() + theme(legend.position = "bottom")
+```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
+```r
 max_step_interval <- interval_steps[which.max(interval_steps$steps),]$interval
 ```
 
-###The invertal with the maximum number of total steps is: `r max_step_interval`
+###The invertal with the maximum number of total steps is: 835
 
 ##Imputing missing values
 
-```{r echo = TRUE} 
+
+```r
 NAs <- sum(is.na(steps$steps))
 ```
 
-###In the original dataset there are `r NAs` rows with NA values (missing values) for the number of steps.
+###In the original dataset there are 2304 rows with NA values (missing values) for the number of steps.
 
 My method here was to simply take the mean of the steps column - without NA values - and replace the NAs with that number. 
 
-```{r echo = TRUE}
+
+```r
 library(emil) #package includes an na.fill function
 
 filled_steps <- na.fill(steps, mean(clean_steps$steps))
 filled_daily_steps <- aggregate(steps ~ date, data = filled_steps, sum)
 
 hist(filled_daily_steps$steps, main="Total Steps Taken Per Day - with imputed NA", breaks=10, xlab="Number of Steps")
+```
 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
+```r
 filled_mean_steps = round(mean(filled_daily_steps$steps), 2)
 filled_median_steps = round(median(filled_daily_steps$steps), 2)
 options(scipen=999)
 ```
 
-###The mean number of steps taken per day is: `r mean_steps`   
-###The median number of steps taken per day is: `r median_steps`
+###The mean number of steps taken per day is: 10766.19   
+###The median number of steps taken per day is: 10765
 
 Do these values differ from the estimates from the first part of the assignment? No. Not at all.
 
@@ -78,8 +95,8 @@ What is the impact of imputing missing data on the estimates of the total daily 
 
 ##Are there differences in activity patterns between weekdays and weekends?
 
-```{r echo = TRUE}
 
+```r
 filled_steps$weekday <- weekdays(filled_steps$date)
 
 weekday_type <- ifelse(filled_steps$weekday %in% c("Saturday","Sunday"),"weekend", "weekday")
@@ -97,7 +114,8 @@ ggplot(filled_steps_average, aes(x=interval, y=steps)) +
     facet_wrap(~ weekdays) +
     labs(x="Interval", y="Number of steps") +
     theme_bw()
-
 ```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
 There are differences between weekdays and weekends. It appears that people get started later in the day on the weekends but over all stay more active during the day. The weekdays have a spike in the morning but dips during the day. 

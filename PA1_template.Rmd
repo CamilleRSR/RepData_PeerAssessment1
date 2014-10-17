@@ -2,7 +2,9 @@
 title: "Project 1"
 author: "Camille Pickren"
 date: "Thursday, October 16, 2014"
-output: html_document
+output:
+  html_document:
+    fig_width: 9
 ---
 ##Loading and preprocessing the data  
 
