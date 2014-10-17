@@ -7,7 +7,6 @@ output: html_document
 ##Loading and preprocessing the data  
 
 ```{r, echo = TRUE}
-setwd("~/Reproducible/Project 1")     ##set directory
 steps <- read.csv("activity.csv")     ##load data
 
 steps$date <- as.Date(steps$date)     ##change date column class
